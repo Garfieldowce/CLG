@@ -12,7 +12,7 @@ Aplikacja umożliwia generowanie linków do pobrania plików z Chomikuj.pl.
 
 ## Jak uruchomić
 ### Frontend
-1. Frontend jest dostępny pod adresem: [GitHub Pages](https://garfieldowce.github.io/CLG/).
+1. Frontend jest dostępny pod adresem: [GitHub Pages](https://garfieldowce.github.io/CLG/frontend/).
 
 ### Backend
 1. Backend jest hostowany na Render pod adresem: `https://clg-tkmc.onrender.com.
