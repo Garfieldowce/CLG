@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Generator linków do Chomikuj dla folderów i plików wideo">
-  <meta name="author" content="Your Name">
   <title>Chomikuj Link Generator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/notyf@3.1.0/notyf.min.css" rel="stylesheet">
   <style>
     body {
       background: linear-gradient(135deg, #6a0dad, #1e1e2f);
@@ -132,72 +132,76 @@
     <form id="linkForm">
       <div class="mb-3">
         <label for="login" class="form-label">Login:</label>
-        <input type="text" class="form-control" id="login" placeholder="Wpisz swój login" required>
+        <input type="text" class="form-control" id="login" placeholder="Wpisz swój login" required aria-label="Login">
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">Hasło:</label>
-        <input type="password" class="form-control" id="password" placeholder="Wpisz swoje hasło" required>
+        <input type="password" class="form-control" id="password" placeholder="Wpisz swoje hasło" required aria-label="Hasło">
       </div>
       <div class="mb-3">
         <label for="folderLink" class="form-label">Link do folderu:</label>
-        <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
+        <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required aria-label="Link do folderu">
       </div>
       <div class="mb-3">
         <label for="videoLink" class="form-label">Link do pliku wideo:</label>
-        <input type="url" class="form-control" id="videoLink" placeholder="Wklej link do pliku wideo (np. mp4, mkv)" required>
+        <input type="url" class="form-control" id="videoLink" placeholder="Wklej link do pliku wideo (np. mp4, mkv)" required aria-label="Link do pliku wideo">
       </div>
       <button type="submit" class="btn btn-primary w-100">Generuj linki</button>
     </form>
 
-    <!-- Wyniki -->
     <div id="result" class="result mt-4" style="display: none;">
       <h4>Wygenerowane linki:</h4>
       <pre id="links"></pre>
       <h4>Odtwarzacz Wideo:</h4>
       <div id="videoContainer" class="text-center">
-        <img id="videoThumbnail" class="video-thumbnail" src="" alt="Miniatura wideo" style="display: none;">
-        <video id="videoPlayer" controls style="width: 100%; display: none;">
+        <img id="videoThumbnail" class="video-thumbnail" src="" alt="Miniatura wideo" loading="lazy" style="display: none;">
+        <video id="videoPlayer" controls style="width: 100%; display: none;" loading="lazy">
           <source id="videoSource" src="" type="video/mp4">
           Twoja przeglądarka nie wspiera tagu video.
         </video>
       </div>
-      
-      <!-- Przycisk kopiowania linków -->
-      <button id="copyBtn" class="copy-btn">Kopiuj linki do schowka</button>
 
-      <!-- Przycisk do JDownloader -->
+      <button id="copyBtn" class="copy-btn">Kopiuj linki do schowka</button>
       <button id="jdLinkBtn" class="jd-btn" style="display: none;">Dodaj do JDownloader</button>
 
-      <!-- Komunikat o błędzie -->
       <div id="errorMsg" class="alert alert-danger" style="display: none;"></div>
     </div>
     
-    <!-- Spinner -->
     <div id="loadingSpinner" class="text-center" style="display: none;">
       <div class="spinner"></div>
     </div>
   </div>
 
-  <footer>
-    <p>Stworzone przez <a href="#">Your Name</a></p>
-  </footer>
+  <footer></footer>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1-crypto-js.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/notyf@3.1.0/notyf.min.js"></script>
   <script>
+    const notyf = new Notyf();
+
     document.getElementById('linkForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      toggleLoading(true);
       clearError();
+      toggleLoading(true);
 
       const login = document.getElementById('login').value;
       const password = document.getElementById('password').value;
       const folderLink = document.getElementById('folderLink').value;
       const videoLink = document.getElementById('videoLink').value;
 
+      if (!login || !password || !folderLink || !videoLink) {
+        showError('Wszystkie pola muszą być wypełnione.');
+        toggleLoading(false);
+        return;
+      }
+
+      const encryptedPassword = CryptoJS.AES.encrypt(password, 'secret-key').toString();
+
       try {
-        const response = await fetch('https://your-api-endpoint.com/generate-links', { 
+        const response = await fetch('https://your-api-endpoint.com/generate-links', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ login, password, folderLink })
+          body: JSON.stringify({ login, password: encryptedPassword, folderLink })
         });
 
         const result = await response.json();
@@ -209,7 +213,6 @@
 
     function handleApiResponse(result, videoLink, isSuccess) {
       toggleLoading(false);
-
       const resultDiv = document.getElementById('result');
       const linksContainer = document.getElementById('links');
       const videoPlayer = document.getElementById('videoPlayer');
@@ -217,41 +220,35 @@
       const videoThumbnail = document.getElementById('videoThumbnail');
       const copyBtn = document.getElementById('copyBtn');
       const jdLinkBtn = document.getElementById('jdLinkBtn');
-      
+
       if (isSuccess) {
         resultDiv.style.display = 'block';
         linksContainer.textContent = JSON.stringify(result.links, null, 2);
 
-';
-        links        // Dodanie linku do JDownloader
-        const jdLink = `jdownloader://add-links/${encodeURIComponent(result.links[0])}`;
-        jdLinkBtn.style.display = 'block';
+        if (videoLink) {
+          videoThumbnail.style.display = 'block';
+          videoSource.src = videoLink;
+          videoThumbnail.src = `https://img.youtube.com/vi/${videoLink.split('/').pop()}/0.jpg`;
+
+          videoThumbnail.onload = function() {
+            videoPlayer.style.display = 'block';
+            videoPlayer.load();
+          };
+        }
+
+        jdLinkBtn.style.display = 'inline-block';
         jdLinkBtn.onclick = () => {
-          window.location.href = jdLink;
+          window.location.href = `jdownloader://add-links/${encodeURIComponent(result.links[0])}`;
         };
 
-        loadVideo(videoLink, videoPlayer, videoSource, videoThumbnail);
-
-        // Kopiowanie linku do schowka
         copyBtn.onclick = () => {
           navigator.clipboard.writeText(result.links[0])
-            .then(() => alert('Link skopiowany do schowka!'))
+            .then(() => notyf.success('Link skopiowany do schowka!'))
             .catch(err => showError(`Błąd kopiowania linku: ${err.message}`));
         };
       } else {
         showError(result.message);
       }
-    }
-
-    function loadVideo(videoLink, videoPlayer, videoSource, videoThumbnail) {
-      videoSource.src = videoLink;
-      videoThumbnail.style.display = 'block';
-      videoThumbnail.src = `https://img.youtube.com/vi/${videoLink.split('/').pop()}/0.jpg`;
-
-      videoThumbnail.onload = function() {
-        videoPlayer.style.display = 'block';
-        videoPlayer.load();
-      };
     }
 
     function handleError(error) {
