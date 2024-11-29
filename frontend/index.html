@@ -164,8 +164,8 @@
         <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
       </div>
       <div class="mb-3">
-        <label for="videoUrl" class="form-label">URL do wideo:</label>
-        <input type="url" class="form-control" id="videoUrl" placeholder="Wklej link do wideo" required>
+        <label for="videoUrl" class="form-label">URL do wideo (opcjonalne):</label>
+        <input type="url" class="form-control" id="videoUrl" placeholder="Wklej link do wideo (opcjonalnie)">
       </div>
       <button type="submit" class="btn btn-primary w-100">Generuj linki</button>
     </form>
@@ -261,8 +261,10 @@
       loadingDiv.style.display = 'none';
       resultDiv.style.display = 'block';
 
-      // Wyświetlanie wideo
-      displayVideo(videoUrl);
+      // Jeśli URL do wideo jest podany, wyświetlenie wideo
+      if (videoUrl) {
+        displayVideo(videoUrl);
+      }
     });
   </script>
 </body>
