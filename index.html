@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chomikuj Link Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* --- Globalne style dla body --- */
+    body {
+      background: linear-gradient(135deg, #9b59b6, #34495e); /* Fioletowy gradient tła */
+      color: #ffffff;
+      font-family: 'Arial', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* --- Stylizacja kontenera --- */
+    .container {
+      max-width: 500px;
+      padding: 2rem;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s;
+    }
+
+    /* --- Stylizacja przycisku --- */
+    .btn-primary {
+      background-color: #8e44ad;
+      border: none;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 0.8rem;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #a64dbf;
+    }
+
+    /* --- Stylizacja nagłówka --- */
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    /* --- Stylizacja etykiet formularza --- */
+    label {
+      font-weight: bold;
+    }
+
+    /* --- Stylizacja wyników --- */
+    .result {
+      background: #2a2a40;
+      border-radius: 5px;
+      padding: 1rem;
+      margin-top: 1rem;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    .result h4 {
+      margin-bottom: 0.5rem;
+    }
+
+    /* --- Stylizacja stopki --- */
+    footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #bbbbbb;
+    }
+
+    footer a {
+      color: #8e44ad;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- Stylizacja przycisku zmiany trybu --- */
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #fff;
+      border: none;
+      font-size: 1.5rem;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* --- Tryb jasny --- */
+    body.light-mode {
+      background: #ecf0f1;
+      color: #34495e;
+    }
+
+    .container.light-mode {
+      background: #ffffff;
+      color: #34495e;
+    }
+
+    .btn-primary.light-mode {
+      background-color: #3498db;
+      color: #fff;
+    }
+
+    .btn-primary.light-mode:hover {
+      background-color: #2980b9;
+    }
+
+    /* --- Tryb ciemny --- */
+    body.dark-mode {
+      background: linear-gradient(135deg, #6a0dad, #1e1e2f); /* Fioletowy gradient tła w trybie ciemnym */
+      color: #ffffff;
+    }
+
+    .container.dark-mode {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .toggle-btn.dark-mode {
+      background-color: #2c3e50;
+      color: #ffffff;
+    }
+
+    .toggle-btn.dark-mode:hover {
+      background-color: #34495e;
+    }
+
+  </style>
+</head>
+
+<body class="dark-mode">
+  <!-- Przycisk do przełączania trybu -->
+  <button id="toggleMode" class="toggle-btn">☀️</button>
+
+  <!-- Główna zawartość strony -->
+  <div class="container">
+    <h1>Chomikuj Link Generator</h1>
+
+    <!-- Formularz do wprowadzania danych użytkownika -->
+    <form id="linkForm">
+      <div class="mb-3">
+        <label for="login" class="form-label">Login:</label>
+        <input type="text" class="form-control" id="login" placeholder="Wpisz swój login" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Hasło:</label>
+        <input type="password" class="form-control" id="password" placeholder="Wpisz swoje hasło" required>
+      </div>
+      <div class="mb-3">
+        <label for="folderLink" class="form-label">Link do folderu:</label>
+        <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Generuj linki</button>
+    </form>
+
+    <!-- Sekcja wyświetlająca wygenerowane linki -->
+    <div id="result" class="result mt-4" style="display: none;">
+      <h4>Wygenerowane linki:</h4>
+      <pre id="links"></pre>
+    </div>
+  </div>
+
+  <!-- Skrypt JavaScript do obsługi trybu ciemnego, jasnego oraz generowania linków -->
+  <script>
+    // Funkcja przełączająca tryb ciemny i jasny
+    document.getElementById('toggleMode').addEventListener('click', function() {
+      // Zmiana klasy trybu
+      document.body.classList.toggle('dark-mode');
+      document.querySelector('.container').classList.toggle('dark-mode');
+      document.querySelector('.btn-primary').classList.toggle('light-mode');
+      document.getElementById('toggleMode').classList.toggle('dark-mode');
+
+      // Zmiana ikony przycisku w zależności od trybu
+      const isLightMode = document.body.classList.contains('light-mode');
+      document.getElementById('toggleMode').textContent = isLightMode ? '🌙' : '☀️';
+    });
+
+    // Obsługa formularza do generowania linków
+    document.getElementById('linkForm').addEventListener('submit', async (e) => {
+      e.preventDefault(); // Zapobiega przeładowaniu strony
+
+      // Pobranie wartości z formularza
+      const login = document.getElementById('login').value;
+      const password = document.getElementById('password').value;
+      const folderLink = document.getElementById('folderLink').value;
+
+      try {
+        // Wysyłanie danych do backendu w celu generowania linków
+        const response = await fetch('https://clg-tkmc.onrender.com/generate-links', { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ login, password, folderLink }),
+        });
+
+        // Przetwarzanie odpowiedzi z backendu
+        const result = await response.json();
+        const resultDiv = document.getElementById('result');
+        const linksContainer = document.getElementById('links');
+
+        // Wyświetlenie wygenerowanych linków lub komunikatu o błędzie
+        if (response.ok) {
+          resultDiv.style.display = 'block';
+          linksContainer.textContent = JSON.stringify(result.links, null, 2);
+        } else {
+          resultDiv.style.display = 'block';
+          linksContainer.textContent = `Błąd: ${result.message}`;
+        }
+      } catch (error) {
+        // Obsługa błędów połączenia
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+        document.getElementById('links').textContent = `Błąd połączenia: ${error.message}`;
+      }
+    });
+  </script>
+
+  <!-- Dodatkowe sekcje HTML w celu rozbudowy -->
+  <div class="extra-section mt-4">
+    <h2>Więcej opcji</h2>
+    <p>Możliwość dodania nowych funkcji, jak np. zarządzanie linkami, więcej ustawień dla trybu ciemnego i jasnego, lub inne funkcje API.</p>
+    <button class="btn btn-secondary">Więcej opcji</button>
+  </div>
+
+  <div class="extra-section mt-4">
+    <h2>Informacje dodatkowe</h2>
+    <p>Podstawowe informacje o aplikacji oraz jej możliwościach w różnych trybach.</p>
+    <button class="btn btn-info">Dowiedz się więcej</button>
+  </div>
+
+  <!-- Kolejne sekcje HTML do zwiększenia liczby linijek -->
+  <footer>
+    <p>&copy; 2024 Chomikuj Link Generator. Wszelkie prawa zastrzeżone. <a href="#">Polityka prywatności</a></p>
+  </footer>
+</body>
+</html>
+
+
+
