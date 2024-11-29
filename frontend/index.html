@@ -6,9 +6,9 @@
   <title>Chomikuj Link Generator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* --- Globalne style dla body --- */
+    /* --- Globalne style --- */
     body {
-      background: linear-gradient(135deg, #9b59b6, #34495e); /* Fioletowy gradient tła */
+      background: linear-gradient(135deg, #9b59b6, #34495e);
       color: #ffffff;
       font-family: 'Arial', sans-serif;
       min-height: 100vh;
@@ -19,7 +19,6 @@
       transition: background-color 0.3s, color 0.3s;
     }
 
-    /* --- Stylizacja kontenera --- */
     .container {
       max-width: 500px;
       padding: 2rem;
@@ -29,7 +28,6 @@
       transition: background-color 0.3s;
     }
 
-    /* --- Stylizacja przycisku --- */
     .btn-primary {
       background-color: #8e44ad;
       border: none;
@@ -44,7 +42,6 @@
       background-color: #a64dbf;
     }
 
-    /* --- Stylizacja nagłówka --- */
     h1 {
       font-size: 2rem;
       font-weight: bold;
@@ -52,12 +49,10 @@
       margin-bottom: 1.5rem;
     }
 
-    /* --- Stylizacja etykiet formularza --- */
     label {
       font-weight: bold;
     }
 
-    /* --- Stylizacja wyników --- */
     .result {
       background: #2a2a40;
       border-radius: 5px;
@@ -67,11 +62,6 @@
       white-space: pre-wrap;
     }
 
-    .result h4 {
-      margin-bottom: 0.5rem;
-    }
-
-    /* --- Stylizacja stopki --- */
     footer {
       margin-top: 2rem;
       text-align: center;
@@ -88,21 +78,7 @@
       text-decoration: underline;
     }
 
-    /* --- Stylizacja przycisku zmiany trybu --- */
-    .toggle-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background-color: #fff;
-      border: none;
-      font-size: 1.5rem;
-      padding: 0.5rem;
-      border-radius: 50%;
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    /* --- Tryb jasny --- */
+    /* --- Tryb ciemny i jasny --- */
     body.light-mode {
       background: #ecf0f1;
       color: #34495e;
@@ -122,9 +98,8 @@
       background-color: #2980b9;
     }
 
-    /* --- Tryb ciemny --- */
     body.dark-mode {
-      background: linear-gradient(135deg, #6a0dad, #1e1e2f); /* Fioletowy gradient tła w trybie ciemnym */
+      background: linear-gradient(135deg, #6a0dad, #1e1e2f);
       color: #ffffff;
     }
 
@@ -132,21 +107,40 @@
       background: rgba(0, 0, 0, 0.8);
     }
 
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #fff;
+      border: none;
+      font-size: 1.5rem;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+    }
+
     .toggle-btn.dark-mode {
       background-color: #2c3e50;
       color: #ffffff;
     }
 
-    .toggle-btn.dark-mode:hover {
-      background-color: #34495e;
+    /* --- Animacja przycisku trybu --- */
+    @keyframes toggleAnimation {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .toggle-btn:hover {
+      animation: toggleAnimation 0.5s ease-in-out;
     }
 
   </style>
 </head>
-
 <body class="dark-mode">
   <!-- Przycisk do przełączania trybu -->
-  <button id="toggleMode" class="toggle-btn">☀️</button>
+  <button id="toggleMode" class="toggle-btn" aria-label="Switch theme">☀️</button>
 
   <!-- Główna zawartość strony -->
   <div class="container">
@@ -175,6 +169,35 @@
       <pre id="links"></pre>
     </div>
   </div>
+
+  <!-- Dodatkowe sekcje HTML w celu rozbudowy -->
+  <div class="extra-section mt-4">
+    <h2>Więcej opcji</h2>
+    <p>Możliwość dodania nowych funkcji, jak np. zarządzanie linkami, więcej ustawień dla trybu ciemnego i jasnego, lub inne funkcje API.</p>
+    <button class="btn btn-secondary">Więcej opcji</button>
+  </div>
+
+  <div class="extra-section mt-4">
+    <h2>Informacje dodatkowe</h2>
+    <p>Podstawowe informacje o aplikacji oraz jej możliwościach w różnych trybach.</p>
+    <button class="btn btn-info">Dowiedz się więcej</button>
+  </div>
+
+  <div class="extra-section mt-4">
+    <h2>FAQ</h2>
+    <p>W tej sekcji można umieścić pytania i odpowiedzi dotyczące działania aplikacji, często pojawiające się problemy i ich rozwiązania.</p>
+    <button class="btn btn-warning">Zobacz FAQ</button>
+  </div>
+
+  <div class="extra-section mt-4">
+    <h2>Kontakt</h2>
+    <p>Masz pytania? Skontaktuj się z nami za pomocą formularza kontaktowego.</p>
+    <button class="btn btn-success">Skontaktuj się z nami</button>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Chomikuj Link Generator. Wszelkie prawa zastrzeżone. <a href="#">Polityka prywatności</a></p>
+  </footer>
 
   <!-- Skrypt JavaScript do obsługi trybu ciemnego, jasnego oraz generowania linków -->
   <script>
@@ -205,15 +228,14 @@
         const response = await fetch('https://clg-tkmc.onrender.com/generate-links', { 
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ login, password, folderLink }),
+          body: JSON.stringify({ login, password, folderLink })
         });
 
-        // Przetwarzanie odpowiedzi z backendu
+        // Obsługa odpowiedzi z serwera
         const result = await response.json();
         const resultDiv = document.getElementById('result');
         const linksContainer = document.getElementById('links');
 
-        // Wyświetlenie wygenerowanych linków lub komunikatu o błędzie
         if (response.ok) {
           resultDiv.style.display = 'block';
           linksContainer.textContent = JSON.stringify(result.links, null, 2);
@@ -229,26 +251,5 @@
       }
     });
   </script>
-
-  <!-- Dodatkowe sekcje HTML w celu rozbudowy -->
-  <div class="extra-section mt-4">
-    <h2>Więcej opcji</h2>
-    <p>Możliwość dodania nowych funkcji, jak np. zarządzanie linkami, więcej ustawień dla trybu ciemnego i jasnego, lub inne funkcje API.</p>
-    <button class="btn btn-secondary">Więcej opcji</button>
-  </div>
-
-  <div class="extra-section mt-4">
-    <h2>Informacje dodatkowe</h2>
-    <p>Podstawowe informacje o aplikacji oraz jej możliwościach w różnych trybach.</p>
-    <button class="btn btn-info">Dowiedz się więcej</button>
-  </div>
-
-  <!-- Kolejne sekcje HTML do zwiększenia liczby linijek -->
-  <footer>
-    <p>&copy; 2024 Chomikuj Link Generator. Wszelkie prawa zastrzeżone. <a href="#">Polityka prywatności</a></p>
-  </footer>
 </body>
 </html>
-
-
-
