@@ -139,6 +139,19 @@
       }
     }
 
+    /* Ciemne napisy w trybie jasnym */
+    body.light-mode label, 
+    body.light-mode h1, 
+    body.light-mode .btn-primary {
+      color: #34495e;
+    }
+
+    /* Ciemny kolor w formularzu dla jasnego motywu */
+    body.light-mode .form-control {
+      background-color: #ecf0f1;
+      color: #34495e;
+    }
+
   </style>
 </head>
 <body class="dark-mode">
@@ -226,46 +239,4 @@
         const videoId = url.split('/').pop();
         iframe = `<iframe width="100%" height="315" src="https://player.vimeo.com/video/${videoId}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
       }
-      // Obsługa URL Chomikuj
-      else if (url.includes('chomikuj.pl')) {
-        iframe = `<p>Link do wideo na Chomikuj: <a href="${url}" target="_blank">${url}</a></p>`;
-      }
-      // Jeżeli URL nie jest rozpoznany
-      else {
-        iframe = 'Nie rozpoznano tego linku wideo.';
-      }
-
-      // Dodanie wideo do kontenera
-      videoContainer.innerHTML = iframe;
-    }
-
-    // Obsługa formularza
-    document.getElementById('linkForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const login = document.getElementById('login').value;
-      const password = document.getElementById('password').value;
-      const folderLink = document.getElementById('folderLink').value;
-      const videoUrl = document.getElementById('videoUrl').value;
-
-      // Pokazanie loadingu
-      loadingDiv.style.display = 'block';
-      resultDiv.style.display = 'none';
-
-      // Generowanie linków do plików w folderze
-      const links = await generateFolderLinks(folderLink);
-
-      // Wyświetlanie wygenerowanych linków
-      linksContainer.textContent = links.join('\n');
-
-      // Wyświetlanie wyników
-      loadingDiv.style.display = 'none';
-      resultDiv.style.display = 'block';
-
-      // Jeśli URL do wideo jest podany, wyświetlenie wideo
-      if (videoUrl) {
-        displayVideo(videoUrl);
-      }
-    });
-  </script>
-</body>
-</html>
+      // Obsługa URL Ch
