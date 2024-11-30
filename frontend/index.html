@@ -6,8 +6,9 @@
   <title>Chomikuj Link Generator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* Globalne style */
     body {
+      background-color: #ecf0f1;
+      color: #34495e;
       font-family: 'Arial', sans-serif;
       margin: 0;
       display: flex;
@@ -23,84 +24,19 @@
       border-radius: 10px;
       background: rgba(0, 0, 0, 0.7);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-      transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.3s;
     }
 
-    /* Tryb ciemny */
     body.dark-mode {
-      background-color: #041F0C; /* Tło ciemnego trybu */
-      color: #D6982D; /* Kolor tekstu ciemnego trybu */
+      background-color: #041F0C; /* Ciemne tło */
+      background-image: url('https://github.com/TwójKonto/chomikuj-link-generator/raw/main/assets/background.jpg'); /* Link do obrazka */
+      background-size: cover; /* Dopasowanie tła */
+      background-position: center;
+      color: #D6982D; /* Zmieniamy kolor tekstu na ciemny złoty */
     }
 
     .container.dark-mode {
-      background-color: #2a2a40;
-      color: #D6982D;
-    }
-
-    .btn-primary.dark-mode {
-      background-color: #D6982D;
-      color: #fff;
-    }
-
-    .btn-primary.dark-mode:hover {
-      background-color: #b57a1d;
-    }
-
-    /* Tryb jasny */
-    body.light-mode {
-      background-color: #ecf0f1; /* Tło jasnego trybu */
-      color: #34495e; /* Kolor tekstu jasnego trybu */
-    }
-
-    .container.light-mode {
-      background-color: #fff;
-      color: #34495e;
-    }
-
-    .btn-primary.light-mode {
-      background-color: #D6982D;
-      color: #fff;
-    }
-
-    .btn-primary.light-mode:hover {
-      background-color: #b57a1d;
-    }
-
-    h1 {
-      font-size: 2rem;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    label {
-      font-weight: bold;
-    }
-
-    .result {
-      background: #2a2a40;
-      border-radius: 5px;
-      padding: 1rem;
-      margin-top: 1rem;
-      word-wrap: break-word;
-      white-space: pre-wrap;
-      display: none;
-    }
-
-    footer {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #bbbbbb;
-    }
-
-    footer a {
-      color: #8e44ad;
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
+      background: rgba(0, 0, 0, 0.7);
     }
 
     .toggle-btn {
@@ -116,41 +52,27 @@
       z-index: 10;
     }
 
-    /* Stylizacja odtwarzacza wideo */
-    #videoContainer iframe {
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    /* Tryb ciemny */
+    body.light-mode {
+      background: #ecf0f1;
+      color: #34495e;
     }
 
-    /* Stylizacja na urządzenia mobilne */
-    @media (max-width: 768px) {
-      .container {
-        max-width: 100%;
-        margin: 1rem;
-        padding: 1.5rem;
-      }
+    .btn-primary {
+      background-color: #8e44ad;
+      color: #D6982D;
+    }
 
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      .btn-primary {
-        font-size: 1rem;
-        padding: 0.7rem;
-      }
+    .btn-primary:hover {
+      background-color: #a64dbf;
     }
   </style>
 </head>
 <body class="dark-mode">
-  <!-- Przycisk przełączania trybu -->
   <button id="toggleMode" class="toggle-btn" aria-label="Switch theme">☀️</button>
 
-  <!-- Główna zawartość strony -->
   <div class="container">
     <h1>Chomikuj Link Generator</h1>
-
-    <!-- Formularz do wprowadzania danych użytkownika -->
     <form id="linkForm">
       <div class="mb-3">
         <label for="login" class="form-label">Login:</label>
@@ -171,95 +93,24 @@
       <button type="submit" class="btn btn-primary w-100">Generuj linki</button>
     </form>
 
-    <!-- Sekcja wyświetlająca wygenerowane linki -->
     <div id="result" class="result mt-4">
       <h4>Wygenerowane linki:</h4>
       <pre id="links"></pre>
     </div>
-    <div id="loading" class="mt-2" style="display:none;">
-      <p class="text-center">Ładowanie...</p>
-    </div>
-
-    <!-- Sekcja na odtwarzacz wideo -->
-    <div id="videoContainer" class="mt-4"></div>
   </div>
 
-  <!-- Skrypt JavaScript -->
   <script>
-    // Buforowanie elementów
     const toggleButton = document.getElementById('toggleMode');
     const body = document.body;
     const container = document.querySelector('.container');
     const btnPrimary = document.querySelector('.btn-primary');
-    const resultDiv = document.getElementById('result');
-    const loadingDiv = document.getElementById('loading');
-    const linksContainer = document.getElementById('links');
-    const videoContainer = document.getElementById('videoContainer');
 
-    // Funkcja przełączająca tryb ciemny/jasny
     toggleButton.addEventListener('click', () => {
       const isLightMode = body.classList.toggle('light-mode');
       body.classList.toggle('dark-mode');
       container.classList.toggle('dark-mode');
       btnPrimary.classList.toggle('light-mode');
       toggleButton.textContent = isLightMode ? '🌙' : '☀️';
-    });
-
-    // Funkcja do wyświetlania odtwarzacza wideo
-    function displayVideo(url) {
-      let iframe;
-
-      // Obsługa URL YouTube
-      if (url.includes('youtube.com') || url.includes('youtu.be')) {
-        const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-        iframe = `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-      }
-      // Obsługa URL Vimeo
-      else if (url.includes('vimeo.com')) {
-        const videoId = url.split('/').pop();
-        iframe = `<iframe width="100%" height="315" src="https://player.vimeo.com/video/${videoId}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-      }
-      // Obsługa URL Chomikuj
-      else if (url.includes('chomikuj.pl')) {
-        iframe = `<p>Link do wideo na Chomikuj: <a href="${url}" target="_blank">${url}</a></p>`;
-      }
-      // Jeżeli URL nie jest rozpoznany
-      else {
-        iframe = 'Nie rozpoznano tego linku wideo.';
-      }
-
-      // Dodanie wideo do kontenera
-      videoContainer.innerHTML = iframe;
-    }
-
-    // Obsługa formularza
-    document.getElementById('linkForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const login = document.getElementById('login').value;
-      const password = document.getElementById('password').value;
-      const folderLink = document.getElementById('folderLink').value;
-      const videoUrl = document.getElementById('videoUrl').value;
-
-      // Pokazanie loadingu
-      loadingDiv.style.display = 'block';
-      resultDiv.style.display = 'none';
-
-      // Generowanie linków
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const links = `
-        Login: ${login}
-        Hasło: ${password}
-        Link do folderu: ${folderLink}
-      `;
-      linksContainer.textContent = links;
-
-      // Wyświetlanie wyników
-      loadingDiv.style.display = 'none';
-      resultDiv.style.display = 'block';
-
-      // Wyświetlanie wideo
-      displayVideo(videoUrl);
     });
   </script>
 </body>
