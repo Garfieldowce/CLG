@@ -78,13 +78,6 @@
       text-decoration: underline;
     }
 
-    /* Stylizacja odtwarzacza wideo */
-    #videoContainer iframe {
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
   </style>
 </head>
 <body class="dark-mode">
@@ -95,102 +88,57 @@
     <!-- Formularz do wprowadzania danych użytkownika -->
     <form id="linkForm">
       <div class="mb-3">
-        <label for="login" class="form-label">Login:</label>
-        <input type="text" class="form-control" id="login" placeholder="Wpisz swój login">
-      </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Hasło:</label>
-        <input type="password" class="form-control" id="password" placeholder="Wpisz swoje hasło">
-      </div>
-      <div class="mb-3">
         <label for="folderLink" class="form-label">Link do folderu:</label>
         <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
       </div>
-      <div class="mb-3">
-        <label for="videoUrl" class="form-label">URL do wideo:</label>
-        <input type="url" class="form-control" id="videoUrl" placeholder="Wklej link do wideo">
-      </div>
-      <button type="submit" class="btn btn-primary w-100">Generuj linki</button>
+      <button type="submit" class="btn btn-primary w-100">Generuj link</button>
     </form>
 
     <!-- Sekcja wyświetlająca wygenerowane linki -->
     <div id="result" class="result mt-4">
-      <h4>Wygenerowane linki:</h4>
-      <pre id="links"></pre>
+      <h4>Plik jest gotowy do pobrania!</h4>
     </div>
     <div id="loading" class="mt-2" style="display:none;">
       <p class="text-center">Ładowanie...</p>
     </div>
-
-    <!-- Sekcja na odtwarzacz wideo -->
-    <div id="videoContainer" class="mt-4"></div>
   </div>
 
   <!-- Skrypt JavaScript -->
   <script>
     // Buforowanie elementów
-    const body = document.body;
-    const resultDiv = document.getElementById('result');
     const loadingDiv = document.getElementById('loading');
-    const linksContainer = document.getElementById('links');
-    const videoContainer = document.getElementById('videoContainer');
+    const resultDiv = document.getElementById('result');
 
     // Funkcja do wyświetlania linku do pobrania
-    function generateDownloadLink(folderUrl) {
+    function downloadFile(folderUrl) {
       // Zakładamy, że link do folderu jest typu "https://chomikuj.pl/folder" i chcemy go przekształcić
       // w link do pobrania jakiegoś pliku w tym folderze.
-      // Może to być zależne od struktury folderu i plików na chomikuj.pl.
       
-      // Przykładowa logika generowania linku do pliku
-      const downloadUrl = folderUrl.replace('folder', 'file'); // Zamiana "folder" na "file" jako przykład
-      return downloadUrl;
-    }
-
-    // Funkcja do wyświetlania wideo
-    function displayVideo(url) {
-      let iframe;
-
-      // Obsługa URL Chomikuj
-      if (url.includes('chomikuj.pl')) {
-        const downloadLink = generateDownloadLink(url);
-        iframe = `<p>Link do pobrania z Chomikuj: <a href="${downloadLink}" target="_blank">${downloadLink}</a></p>`;
-      }
-      else {
-        iframe = 'Nie rozpoznano tego linku wideo.';
-      }
-
-      // Dodanie wideo do kontenera
-      videoContainer.innerHTML = iframe;
+      // Na razie zakładamy, że w folderze jest tylko jeden plik lub przekształcamy link do pobierania
+      const downloadUrl = folderUrl.replace('folder', 'file'); // Prosty przykład, gdzie zmieniamy "folder" na "file"
+      
+      // Przekierowanie użytkownika na link do pobrania
+      window.location.href = downloadUrl;
     }
 
     // Obsługa formularza
     document.getElementById('linkForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const login = document.getElementById('login').value;
-      const password = document.getElementById('password').value;
       const folderLink = document.getElementById('folderLink').value;
-      const videoUrl = document.getElementById('videoUrl').value;
 
       // Pokazanie loadingu
       loadingDiv.style.display = 'block';
       resultDiv.style.display = 'none';
 
-      // Generowanie linków
+      // Symulacja ładowania pliku
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      const links = `
-        Login: ${login}
-        Hasło: ${password}
-        Link do folderu: ${folderLink}
-      `;
-      linksContainer.textContent = links;
+      // Przekierowanie na stronę pobierania
+      downloadFile(folderLink);
 
       // Wyświetlanie wyników
       loadingDiv.style.display = 'none';
       resultDiv.style.display = 'block';
-
-      // Wyświetlanie wideo (lub linku do pobrania)
-      displayVideo(videoUrl);
     });
   </script>
 </body>
