@@ -15,6 +15,12 @@
       align-items: center;
       min-height: 100vh;
       transition: background-color 0.3s, color 0.3s;
+      background-color: #041F0C; /* Tło ciemne */
+      background-image: url('https://cdn.discordapp.com/attachments/1262797342554194003/1309532845563187230/20241122_155526.png?ex=674bd040&is=674a7ec0&hm=c9a18a0385c6ff76d00dddf31304a350172cab9616ce213bd79a554e9100414c&'); /* Tło obrazka */
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed; /* Przyklejenie tła */
+      color: #D6982D; /* Kolor tekstu */
     }
 
     .container {
@@ -26,31 +32,17 @@
       transition: background-color 0.3s;
     }
 
-    /* Tło w trybie ciemnym */
+    /* Tylko tryb ciemny */
     body.dark-mode {
-      background-color: #041F0C; /* Ciemne tło */
-      background-image: url('https://cdn.discordapp.com/attachments/1262797342554194003/1309532845563187230/20241122_155526.png?ex=674bd040&is=674a7ec0&hm=c9a18a0385c6ff76d00dddf31304a350172cab9616ce213bd79a554e9100414c&'); /* Tło obrazu */
-      background-size: cover;
-      background-position: center;
       color: #D6982D; /* Kolor tekstu na ciemnym */
     }
 
-    /* Tło w trybie jasnym */
-    body.light-mode {
-      background-color: #ecf0f1; /* Jasne tło */
-      background-image: url('https://cdn.discordapp.com/attachments/1262797342554194003/1309532845563187230/20241122_155526.png?ex=674bd040&is=674a7ec0&hm=c9a18a0385c6ff76d00dddf31304a350172cab9616ce213bd79a554e9100414c&'); /* Tło obrazu */
-      background-size: cover;
-      background-position: center;
-      color: #34495e; /* Kolor tekstu na jasnym */
-    }
-
-    /* Tryb ciemny - fioletowy przycisk */
-    body.dark-mode .btn-primary {
+    .btn-primary {
       background-color: #8e44ad;
       color: #D6982D;
     }
 
-    body.dark-mode .btn-primary:hover {
+    .btn-primary:hover {
       background-color: #a64dbf;
     }
 
@@ -140,9 +132,6 @@
   </style>
 </head>
 <body class="dark-mode">
-  <!-- Przycisk przełączania trybu -->
-  <button id="toggleMode" class="toggle-btn" aria-label="Switch theme">☀️</button>
-
   <!-- Główna zawartość strony -->
   <div class="container">
     <h1>Chomikuj Link Generator</h1>
@@ -184,23 +173,11 @@
   <!-- Skrypt JavaScript -->
   <script>
     // Buforowanie elementów
-    const toggleButton = document.getElementById('toggleMode');
     const body = document.body;
-    const container = document.querySelector('.container');
-    const btnPrimary = document.querySelector('.btn-primary');
     const resultDiv = document.getElementById('result');
     const loadingDiv = document.getElementById('loading');
     const linksContainer = document.getElementById('links');
     const videoContainer = document.getElementById('videoContainer');
-
-    // Funkcja przełączająca tryb ciemny/jasny
-    toggleButton.addEventListener('click', () => {
-      const isLightMode = body.classList.toggle('light-mode');
-      body.classList.toggle('dark-mode');
-      container.classList.toggle('dark-mode');
-      btnPrimary.classList.toggle('light-mode');
-      toggleButton.textContent = isLightMode ? '🌙' : '☀️';
-    });
 
     // Funkcja do wyświetlania odtwarzacza wideo
     function displayVideo(url) {
