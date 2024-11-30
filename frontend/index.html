@@ -8,7 +8,7 @@
   <style>
     /* Globalne style */
     body {
-      background conic-gradient(from 90deg, red, blue)
+      background: conic-gradient(from 90deg, red, blue);
       color: #ffffff;
       font-family: 'Arial', sans-serif;
       margin: 0;
@@ -28,14 +28,33 @@
       transition: background-color 0.3s;
     }
 
-    /* Tryb ciemny - fioletowy przycisk */
-    body.dark-mode .btn-primary {
-      background-color: #8e44ad;
+    /* Przyciski - kolor #D6982D */
+    body.dark-mode .btn-primary,
+    body.light-mode .btn-primary {
+      background-color: #D6982D;
+      color: #fff;
+    }
+
+    body.dark-mode .btn-primary:hover,
+    body.light-mode .btn-primary:hover {
+      background-color: #b57a1d;
+    }
+
+    /* Tryb ciemny - kolor tła */
+    body.dark-mode {
+      background-color: #041F0C;
       color: #D6982D;
     }
 
-    body.dark-mode .btn-primary:hover {
-      background-color: #a64dbf;
+    /* Tryb jasny */
+    body.light-mode {
+      background-color: #ecf0f1;
+      color: #34495e;
+    }
+
+    .container.light-mode {
+      background: #fff;
+      color: #34495e;
     }
 
     h1 {
@@ -88,29 +107,10 @@
       z-index: 10;
     }
 
+    /* Przycisk w trybie ciemnym */
     .toggle-btn.dark-mode {
-      background-color: ##7401E1;
-      color: ##FFFFFF;
-    }
-
-    /* Tryby ciemny i jasny */
-    body.light-mode {
-      background: #ecf0f1;
-      color: #34495e;
-    }
-
-    .container.light-mode {
-      background: ##FFFFFF;
-      color: ##FFFFFF;
-    }
-
-    .btn-primary.light-mode {
-      background-color: ##FFFFFF;
-      color: #fff;
-    }
-
-    .btn-primary.light-mode:hover {
-      background-color: #2980b9;
+      background-color: #7401E1;
+      color: #FFFFFF;
     }
 
     /* Stylizacja odtwarzacza wideo */
