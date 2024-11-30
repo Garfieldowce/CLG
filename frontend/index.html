@@ -32,11 +32,6 @@
       transition: background-color 0.3s;
     }
 
-    /* Tylko tryb ciemny */
-    body.dark-mode {
-      color: #D6982D; /* Kolor tekstu na ciemnym */
-    }
-
     .btn-primary {
       background-color: #8e44ad;
       color: #D6982D;
@@ -83,24 +78,6 @@
       text-decoration: underline;
     }
 
-    .toggle-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background-color: #fff;
-      border: none;
-      font-size: 1.5rem;
-      padding: 0.5rem;
-      border-radius: 50%;
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    .toggle-btn.dark-mode {
-      background-color: #7401E1;
-      color: #FFFFFF;
-    }
-
     /* Stylizacja odtwarzacza wideo */
     #videoContainer iframe {
       border: none;
@@ -108,27 +85,6 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
-    /* Stylizacja na urządzenia mobilne */
-    @media (max-width: 768px) {
-      body {
-        background: linear-gradient(135deg, #9b59b6, #34495e);
-      }
-
-      .container {
-        max-width: 100%;
-        margin: 1rem;
-        padding: 1.5rem;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      .btn-primary {
-        font-size: 1rem;
-        padding: 0.7rem;
-      }
-    }
   </style>
 </head>
 <body class="dark-mode">
@@ -179,15 +135,26 @@
     const linksContainer = document.getElementById('links');
     const videoContainer = document.getElementById('videoContainer');
 
-    // Funkcja do wyświetlania odtwarzacza wideo
+    // Funkcja do wyświetlania linku do pobrania
+    function generateDownloadLink(folderUrl) {
+      // Zakładamy, że link do folderu jest typu "https://chomikuj.pl/folder" i chcemy go przekształcić
+      // w link do pobrania jakiegoś pliku w tym folderze.
+      // Może to być zależne od struktury folderu i plików na chomikuj.pl.
+      
+      // Przykładowa logika generowania linku do pliku
+      const downloadUrl = folderUrl.replace('folder', 'file'); // Zamiana "folder" na "file" jako przykład
+      return downloadUrl;
+    }
+
+    // Funkcja do wyświetlania wideo
     function displayVideo(url) {
       let iframe;
 
       // Obsługa URL Chomikuj
       if (url.includes('chomikuj.pl')) {
-        iframe = `<p>Link do wideo na Chomikuj: <a href="${url}" target="_blank">${url}</a></p>`;
+        const downloadLink = generateDownloadLink(url);
+        iframe = `<p>Link do pobrania z Chomikuj: <a href="${downloadLink}" target="_blank">${downloadLink}</a></p>`;
       }
-      // Jeżeli URL nie jest rozpoznany
       else {
         iframe = 'Nie rozpoznano tego linku wideo.';
       }
@@ -222,10 +189,9 @@
       loadingDiv.style.display = 'none';
       resultDiv.style.display = 'block';
 
-      // Wyświetlanie wideo
+      // Wyświetlanie wideo (lub linku do pobrania)
       displayVideo(videoUrl);
     });
   </script>
 </body>
 </html>
-
