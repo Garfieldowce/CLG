@@ -32,11 +32,6 @@
       transition: background-color 0.3s;
     }
 
-    /* Tylko tryb ciemny */
-    body.dark-mode {
-      color: #D6982D; /* Kolor tekstu na ciemnym */
-    }
-
     .btn-primary {
       background-color: #8e44ad;
       color: #D6982D;
@@ -83,51 +78,11 @@
       text-decoration: underline;
     }
 
-    .toggle-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background-color: #fff;
-      border: none;
-      font-size: 1.5rem;
-      padding: 0.5rem;
-      border-radius: 50%;
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    .toggle-btn.dark-mode {
-      background-color: #7401E1;
-      color: #FFFFFF;
-    }
-
     /* Stylizacja odtwarzacza wideo */
     #videoContainer iframe {
       border: none;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Stylizacja na urządzenia mobilne */
-    @media (max-width: 768px) {
-      body {
-        background: linear-gradient(135deg, #9b59b6, #34495e);
-      }
-
-      .container {
-        max-width: 100%;
-        margin: 1rem;
-        padding: 1.5rem;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      .btn-primary {
-        font-size: 1rem;
-        padding: 0.7rem;
-      }
     }
   </style>
 </head>
@@ -201,6 +156,20 @@
       videoContainer.innerHTML = iframe;
     }
 
+    // Funkcja do generowania linków do pobierania
+    function generateDownloadLinks(folderLink) {
+      const fileTypes = ['.mp4', '.zip', '.mkv'];
+      let linksHTML = '';
+
+      // Dodaj linki do pobrania dla każdego pliku w folderze
+      fileTypes.forEach(type => {
+        const downloadLink = folderLink + type;
+        linksHTML += `<p><a href="${downloadLink}" download="${downloadLink}" target="_blank">Pobierz plik ${type}</a></p>`;
+      });
+
+      return linksHTML;
+    }
+
     // Obsługa formularza
     document.getElementById('linkForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -211,30 +180,23 @@
       loadingDiv.style.display = 'block';
       resultDiv.style.display = 'none';
 
-      // Generowanie linków (symulacja)
+      // Generowanie linków
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      const links = `
-        Link do folderu: ${folderLink}
-      `;
-      linksContainer.textContent = links;
+      // Generowanie linków do pobrania
+      const downloadLinks = generateDownloadLinks(folderLink);
+
+      linksContainer.innerHTML = downloadLinks;
 
       // Wyświetlanie wyników
       loadingDiv.style.display = 'none';
       resultDiv.style.display = 'block';
 
       // Zakładając, że struktura URL folderu prowadzi do pliku
-      const downloadLink = folderLink.replace('folder', 'plik');  // Zamiana w URL
+      const downloadLink = folderLink + '/download'; // Można dodać logikę pobierania tutaj
 
-      // Przekierowanie do linku do pobrania
-      window.location.href = downloadLink;
-
-      // Wyświetlanie wideo (opcjonalnie)
-      if (videoUrl) {
-        displayVideo(videoUrl);
-      } else {
-        videoContainer.innerHTML = '<p>Brak linku wideo do wyświetlenia.</p>';
-      }
+      // Wyświetlanie wideo
+      displayVideo(videoUrl);
     });
   </script>
 </body>
