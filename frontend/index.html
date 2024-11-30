@@ -8,8 +8,6 @@
   <style>
     /* Globalne style */
     body {
-      background: conic-gradient(from 90deg, red, blue);
-      color: #ffffff;
       font-family: 'Arial', sans-serif;
       margin: 0;
       display: flex;
@@ -25,36 +23,47 @@
       border-radius: 10px;
       background: rgba(0, 0, 0, 0.7);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, color 0.3s;
     }
 
-    /* Przyciski - kolor #D6982D */
-    body.dark-mode .btn-primary,
-    body.light-mode .btn-primary {
+    /* Tryb ciemny */
+    body.dark-mode {
+      background-color: #041F0C; /* Tło ciemnego trybu */
+      color: #D6982D; /* Kolor tekstu ciemnego trybu */
+    }
+
+    .container.dark-mode {
+      background-color: #2a2a40;
+      color: #D6982D;
+    }
+
+    .btn-primary.dark-mode {
       background-color: #D6982D;
       color: #fff;
     }
 
-    body.dark-mode .btn-primary:hover,
-    body.light-mode .btn-primary:hover {
+    .btn-primary.dark-mode:hover {
       background-color: #b57a1d;
-    }
-
-    /* Tryb ciemny - kolor tła */
-    body.dark-mode {
-      background-color: #041F0C;
-      color: #D6982D;
     }
 
     /* Tryb jasny */
     body.light-mode {
-      background-color: #ecf0f1;
-      color: #34495e;
+      background-color: #ecf0f1; /* Tło jasnego trybu */
+      color: #34495e; /* Kolor tekstu jasnego trybu */
     }
 
     .container.light-mode {
-      background: #fff;
+      background-color: #fff;
       color: #34495e;
+    }
+
+    .btn-primary.light-mode {
+      background-color: #D6982D;
+      color: #fff;
+    }
+
+    .btn-primary.light-mode:hover {
+      background-color: #b57a1d;
     }
 
     h1 {
@@ -107,12 +116,6 @@
       z-index: 10;
     }
 
-    /* Przycisk w trybie ciemnym */
-    .toggle-btn.dark-mode {
-      background-color: #7401E1;
-      color: #FFFFFF;
-    }
-
     /* Stylizacja odtwarzacza wideo */
     #videoContainer iframe {
       border: none;
@@ -122,10 +125,6 @@
 
     /* Stylizacja na urządzenia mobilne */
     @media (max-width: 768px) {
-      body {
-        background: linear-gradient(135deg, #9b59b6, #34495e);
-      }
-
       .container {
         max-width: 100%;
         margin: 1rem;
@@ -204,13 +203,6 @@
       container.classList.toggle('dark-mode');
       btnPrimary.classList.toggle('light-mode');
       toggleButton.textContent = isLightMode ? '🌙' : '☀️';
-
-      // Zmiana koloru tekstu
-      if (isLightMode) {
-        body.style.color = '#7024E0'; // Ciemny tekst
-      } else {
-        body.style.color = '#7024E0'; // Biały tekst
-      }
     });
 
     // Funkcja do wyświetlania odtwarzacza wideo
