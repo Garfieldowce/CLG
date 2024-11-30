@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Automatyczne Pobieranie</title>
+  <title>Automatyczne Pobieranie Wideo</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -38,13 +38,13 @@
 <body>
 
   <div class="container">
-    <h1>Automatyczne Pobieranie</h1>
+    <h1>Automatyczne Pobieranie Wideo</h1>
     <form id="downloadForm">
       <div class="mb-3">
-        <label for="folderLink" class="form-label">Adres folderu:</label>
-        <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
+        <label for="videoUrl" class="form-label">Adres wideo:</label>
+        <input type="url" class="form-control" id="videoUrl" placeholder="Wklej link do wideo" required>
       </div>
-      <button type="submit" class="btn btn-primary w-100">Pobierz plik</button>
+      <button type="submit" class="btn btn-primary w-100">Pobierz wideo</button>
     </form>
 
     <div id="loading" style="display:none;">
@@ -60,18 +60,18 @@
     document.getElementById('downloadForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      const folderLink = document.getElementById('folderLink').value;
+      const videoUrl = document.getElementById('videoUrl').value;
 
       // Pokazanie loadingu
       document.getElementById('loading').style.display = 'block';
       document.getElementById('result').style.display = 'none';
 
-      // Ustawienie timeoutu, aby rozpocząć pobieranie po 2 sekundach
+      // Sprawdzanie, czy URL jest poprawny i pobieranie
       setTimeout(() => {
         // Utwórz element linku do pobrania
         const downloadLink = document.createElement('a');
-        downloadLink.href = folderLink;  // Link do folderu
-        downloadLink.download = folderLink.split('/').pop();  // Automatyczne pobieranie z nazwą pliku
+        downloadLink.href = videoUrl;  // Link do wideo
+        downloadLink.download = videoUrl.split('/').pop();  // Automatyczne pobieranie z nazwą pliku
         document.body.appendChild(downloadLink);
         downloadLink.click();  // Kliknięcie w link, by rozpocząć pobieranie
         document.body.removeChild(downloadLink);  // Usunięcie elementu linku z DOM
