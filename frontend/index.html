@@ -14,12 +14,11 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      transition: background-color 0.3s, color 0.3s;
       background-color: #041F0C; /* Tło ciemne */
-      background-image: url('https://cdn.discordapp.com/attachments/1262797342554194003/1309532845563187230/20241122_155526.png?ex=674bd040&is=674a7ec0&hm=c9a18a0385c6ff76d00dddf31304a350172cab9616ce213bd79a554e9100414c&'); /* Tło obrazka */
+      background-image: url('https://cdn.discordapp.com/attachments/1262797342554194003/1309532845563187230/20241122_155526.png?ex=674bd040&is=674a7ec0&hm=c9a18a0385c6ff76d00dddf31304a350172cab9616ce213bd79a554e9100414c&');
       background-size: cover;
       background-position: center;
-      background-attachment: fixed; /* Przyklejenie tła */
+      background-attachment: fixed;
       color: #D6982D; /* Kolor tekstu */
     }
 
@@ -29,16 +28,6 @@
       border-radius: 10px;
       background: rgba(0, 0, 0, 0.7);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-      transition: background-color 0.3s;
-    }
-
-    .btn-primary {
-      background-color: #8e44ad;
-      color: #D6982D;
-    }
-
-    .btn-primary:hover {
-      background-color: #a64dbf;
     }
 
     h1 {
@@ -50,6 +39,15 @@
 
     label {
       font-weight: bold;
+    }
+
+    .btn-primary {
+      background-color: #8e44ad;
+      color: #D6982D;
+    }
+
+    .btn-primary:hover {
+      background-color: #a64dbf;
     }
 
     .result {
@@ -78,7 +76,24 @@
       text-decoration: underline;
     }
 
-    /* Stylizacja odtwarzacza wideo */
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #fff;
+      border: none;
+      font-size: 1.5rem;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .toggle-btn.dark-mode {
+      background-color: #7401E1;
+      color: #FFFFFF;
+    }
+
     #videoContainer iframe {
       border: none;
       border-radius: 10px;
@@ -86,108 +101,93 @@
     }
   </style>
 </head>
-<body class="dark-mode">
-  <!-- Główna zawartość strony -->
+<body>
   <div class="container">
     <h1>Chomikuj Link Generator</h1>
 
-    <!-- Formularz do wprowadzania danych użytkownika -->
     <form id="linkForm">
       <div class="mb-3">
-        <label for="folderLink" class="form-label">Link do pliku z Chomikuj:</label>
-        <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do pliku" required>
+        <label for="folderLink" class="form-label">Link do folderu:</label>
+        <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
       </div>
-
-      <!-- Opcjonalny link do wideo -->
       <div class="mb-3">
-        <label for="videoUrl" class="form-label">Link do wideo (opcjonalne):</label>
+        <label for="videoUrl" class="form-label">Opcjonalnie, dodaj link do wideo:</label>
         <input type="url" class="form-control" id="videoUrl" placeholder="Wklej link do wideo">
       </div>
-
       <button type="submit" class="btn btn-primary w-100">Generuj linki</button>
     </form>
 
-    <!-- Sekcja wyświetlająca wygenerowane linki -->
     <div id="result" class="result mt-4">
       <h4>Wygenerowane linki:</h4>
       <pre id="links"></pre>
     </div>
+    
     <div id="loading" class="mt-2" style="display:none;">
       <p class="text-center">Ładowanie...</p>
     </div>
-
-    <!-- Sekcja na odtwarzacz wideo -->
+    
     <div id="videoContainer" class="mt-4"></div>
   </div>
 
-  <!-- Skrypt JavaScript -->
   <script>
-    // Buforowanie elementów
-    const body = document.body;
-    const resultDiv = document.getElementById('result');
-    const loadingDiv = document.getElementById('loading');
-    const linksContainer = document.getElementById('links');
-    const videoContainer = document.getElementById('videoContainer');
-
     // Funkcja do wyświetlania odtwarzacza wideo
     function displayVideo(url) {
       let iframe;
 
-      // Obsługa URL YouTube
       if (url.includes('youtube.com') || url.includes('youtu.be')) {
         const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
         iframe = `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-      }
-      // Obsługa URL Vimeo
-      else if (url.includes('vimeo.com')) {
+      } else if (url.includes('vimeo.com')) {
         const videoId = url.split('/').pop();
         iframe = `<iframe width="100%" height="315" src="https://player.vimeo.com/video/${videoId}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-      }
-      // Obsługa URL Chomikuj
-      else if (url.includes('chomikuj.pl')) {
+      } else if (url.includes('chomikuj.pl')) {
         iframe = `<p>Link do wideo na Chomikuj: <a href="${url}" target="_blank">${url}</a></p>`;
-      }
-      // Jeżeli URL nie jest rozpoznany
-      else {
+      } else {
         iframe = 'Nie rozpoznano tego linku wideo.';
       }
 
-      // Dodanie wideo do kontenera
-      videoContainer.innerHTML = iframe;
+      document.getElementById('videoContainer').innerHTML = iframe;
     }
 
-    // Funkcja do generowania linków do pobierania
-    function generateDownloadLinks(fileLink) {
-      // Możemy bezpośrednio dodać link do pliku z Chomikuj
-      return `
-        <p><a href="${fileLink}" download="${fileLink}" target="_blank">Pobierz plik (Chomikuj)</a></p>
-      `;
+    // Funkcja do automatycznego pobierania pliku
+    function autoDownload(url) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = url.split('/').pop(); // Pobieranie pliku z nazwą
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     // Obsługa formularza
     document.getElementById('linkForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const fileLink = document.getElementById('folderLink').value;
+      const folderLink = document.getElementById('folderLink').value;
       const videoUrl = document.getElementById('videoUrl').value;
 
-      // Pokazanie loadingu
-      loadingDiv.style.display = 'block';
-      resultDiv.style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
 
-      // Generowanie linków
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Generowanie linku do pobierania
+      await new Promise(resolve => setTimeout(resolve, 1000));  // Symulacja opóźnienia
 
-      // Generowanie linku do pobrania
-      const downloadLinks = generateDownloadLinks(fileLink);
+      // Wygenerowanie pełnego URL do pobrania
+      const downloadUrl = `https://chomikuj.pl${folderLink.split('chomikuj.pl')[1]}`;
 
-      linksContainer.innerHTML = downloadLinks;
+      // Wyświetlanie linku
+      document.getElementById('links').textContent = `Pobieranie pliku: ${downloadUrl}`;
 
-      // Wyświetlanie wyników
-      loadingDiv.style.display = 'none';
-      resultDiv.style.display = 'block';
+      // Uruchomienie pobierania
+      autoDownload(downloadUrl);
 
-      // Wyświetlanie wideo (jeśli jest dostępne)
-      displayVideo(videoUrl);
+      // Wyświetlenie wyników
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+
+      // Wyświetlanie wideo, jeśli podano URL
+      if (videoUrl) {
+        displayVideo(videoUrl);
+      }
     });
   </script>
 </body>
