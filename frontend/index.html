@@ -100,12 +100,22 @@
     /* Tryby ciemny i jasny */
     body.light-mode {
       background: #ecf0f1;
-      color: #34495e;
+      color: #34495e;  /* Ciemny tekst w trybie jasnym */
     }
 
     .container.light-mode {
       background: #ffffff;
-      color: #34495e;
+      color: #34495e;  /* Ciemny tekst w kontenerze */
+    }
+
+    body.dark-mode {
+      background: #2c3e50;
+      color: #ffffff;  /* Biały tekst w trybie ciemnym */
+    }
+
+    .container.dark-mode {
+      background: #34495e;
+      color: #ffffff;  /* Biały tekst w kontenerze */
     }
 
     .btn-primary.light-mode {
@@ -115,6 +125,19 @@
 
     .btn-primary.light-mode:hover {
       background-color: #2980b9;
+    }
+
+    /* Ciemny przycisk w trybie jasnym */
+    body.light-mode .form-control {
+      background-color: #ecf0f1;
+      color: #34495e; /* Ciemny tekst w polach formularza */
+    }
+
+    /* Stylizacja odtwarzacza wideo */
+    #videoContainer iframe {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     /* Stylizacja na urządzenia mobilne */
@@ -138,20 +161,6 @@
         padding: 0.7rem;
       }
     }
-
-    /* Ciemne napisy w trybie jasnym */
-    body.light-mode label, 
-    body.light-mode h1, 
-    body.light-mode .btn-primary {
-      color: #34495e;
-    }
-
-    /* Ciemny kolor w formularzu dla jasnego motywu */
-    body.light-mode .form-control {
-      background-color: #ecf0f1;
-      color: #34495e;
-    }
-
   </style>
 </head>
 <body class="dark-mode">
@@ -177,8 +186,8 @@
         <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
       </div>
       <div class="mb-3">
-        <label for="videoUrl" class="form-label">URL do wideo (opcjonalne):</label>
-        <input type="url" class="form-control" id="videoUrl" placeholder="Wklej link do wideo (opcjonalnie)">
+        <label for="videoUrl" class="form-label">URL do wideo:</label>
+        <input type="url" class="form-control" id="videoUrl" placeholder="Wklej link do wideo">
       </div>
       <button type="submit" class="btn btn-primary w-100">Generuj linki</button>
     </form>
@@ -215,19 +224,18 @@
       container.classList.toggle('dark-mode');
       btnPrimary.classList.toggle('light-mode');
       toggleButton.textContent = isLightMode ? '🌙' : '☀️';
-    });
 
-    // Funkcja generująca linki do plików w folderze
-    async function generateFolderLinks(folderUrl) {
-      // Symulacja pobierania plików z folderu
-      const fileNames = ['plik1.zip', 'plik2.mp4', 'plik3.pdf'];  // Przykładowe pliki
-      return fileNames.map(fileName => `${folderUrl}/${fileName}`);
-    }
+      // Zmiana koloru tekstu
+      if (isLightMode) {
+        body.style.color = '#34495e'; // Ciemny tekst
+      } else {
+        body.style.color = '#ffffff'; // Biały tekst
+      }
+    });
 
     // Funkcja do wyświetlania odtwarzacza wideo
     function displayVideo(url) {
       let iframe;
-      let videoPlayer;
 
       // Obsługa URL YouTube
       if (url.includes('youtube.com') || url.includes('youtu.be')) {
@@ -239,4 +247,48 @@
         const videoId = url.split('/').pop();
         iframe = `<iframe width="100%" height="315" src="https://player.vimeo.com/video/${videoId}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
       }
-      // Obsługa URL Ch
+      // Obsługa URL Chomikuj
+      else if (url.includes('chomikuj.pl')) {
+        iframe = `<p>Link do wideo na Chomikuj: <a href="${url}" target="_blank">${url}</a></p>`;
+      }
+      // Jeżeli URL nie jest rozpoznany
+      else {
+        iframe = 'Nie rozpoznano tego linku wideo.';
+      }
+
+      // Dodanie wideo do kontenera
+      videoContainer.innerHTML = iframe;
+    }
+
+    // Obsługa formularza
+    document.getElementById('linkForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const login = document.getElementById('login').value;
+      const password = document.getElementById('password').value;
+      const folderLink = document.getElementById('folderLink').value;
+      const videoUrl = document.getElementById('videoUrl').value;
+
+      // Pokazanie loadingu
+      loadingDiv.style.display = 'block';
+      resultDiv.style.display = 'none';
+
+      // Generowanie linków
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const links = `
+        Login: ${login}
+        Hasło: ${password}
+        Link do folderu: ${folderLink}
+      `;
+      linksContainer.textContent = links;
+
+      // Wyświetlanie wyników
+      loadingDiv.style.display = 'none';
+      resultDiv.style.display = 'block';
+
+      // Wyświetlanie wideo
+      displayVideo(videoUrl);
+    });
+  </script>
+</body>
+</html>
