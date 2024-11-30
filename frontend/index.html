@@ -94,8 +94,8 @@
     <!-- Formularz do wprowadzania danych użytkownika -->
     <form id="linkForm">
       <div class="mb-3">
-        <label for="folderLink" class="form-label">Link do folderu:</label>
-        <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
+        <label for="folderLink" class="form-label">Link do pliku z Chomikuj:</label>
+        <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do pliku" required>
       </div>
 
       <!-- Opcjonalny link do wideo -->
@@ -157,23 +157,17 @@
     }
 
     // Funkcja do generowania linków do pobierania
-    function generateDownloadLinks(folderLink) {
-      const fileTypes = ['.mp4', '.zip', '.mkv'];
-      let linksHTML = '';
-
-      // Dodaj linki do pobrania dla każdego pliku w folderze
-      fileTypes.forEach(type => {
-        const downloadLink = folderLink + type;
-        linksHTML += `<p><a href="${downloadLink}" download="${downloadLink}" target="_blank">Pobierz plik ${type}</a></p>`;
-      });
-
-      return linksHTML;
+    function generateDownloadLinks(fileLink) {
+      // Możemy bezpośrednio dodać link do pliku z Chomikuj
+      return `
+        <p><a href="${fileLink}" download="${fileLink}" target="_blank">Pobierz plik (Chomikuj)</a></p>
+      `;
     }
 
     // Obsługa formularza
     document.getElementById('linkForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const folderLink = document.getElementById('folderLink').value;
+      const fileLink = document.getElementById('folderLink').value;
       const videoUrl = document.getElementById('videoUrl').value;
 
       // Pokazanie loadingu
@@ -183,8 +177,8 @@
       // Generowanie linków
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Generowanie linków do pobrania
-      const downloadLinks = generateDownloadLinks(folderLink);
+      // Generowanie linku do pobrania
+      const downloadLinks = generateDownloadLinks(fileLink);
 
       linksContainer.innerHTML = downloadLinks;
 
@@ -192,10 +186,7 @@
       loadingDiv.style.display = 'none';
       resultDiv.style.display = 'block';
 
-      // Zakładając, że struktura URL folderu prowadzi do pliku
-      const downloadLink = folderLink + '/download'; // Można dodać logikę pobierania tutaj
-
-      // Wyświetlanie wideo
+      // Wyświetlanie wideo (jeśli jest dostępne)
       displayVideo(videoUrl);
     });
   </script>
