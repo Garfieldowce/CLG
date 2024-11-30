@@ -81,21 +81,21 @@
         const newWindow = window.open(folderLink, '_blank');
         newWindow.focus();
 
-        // Symulowanie kliknięcia w przycisk na nowej karcie
+        // Symulowanie kliknięcia w pierwszy przycisk na nowej karcie
         setTimeout(() => {
           const downloadButton = newWindow.document.querySelector('.greenButtonCSS'); // Wyszukaj przycisk
           if (downloadButton) {
-            downloadButton.click(); // Kliknij przycisk pobierania
+            downloadButton.click(); // Kliknij pierwszy przycisk "Pobierz"
           }
         }, 2000); // Czekaj 2 sekundy na załadowanie nowej strony
 
-        // Symulowanie przesłania formularza (jeśli taki formularz istnieje)
+        // Symulowanie kliknięcia w drugi przycisk submit (formularz)
         setTimeout(() => {
-          const downloadForm = newWindow.document.querySelector('form#downloadWarningForm'); // Wyszukaj formularz
-          if (downloadForm) {
-            downloadForm.submit(); // Prześlij formularz
+          const submitButton = newWindow.document.querySelector('button[type="submit"]'); // Wyszukaj drugi przycisk
+          if (submitButton) {
+            submitButton.click(); // Kliknij przycisk "Pobierz"
           }
-        }, 3000); // Czekaj kolejne 3 sekundy przed wysłaniem formularza
+        }, 4000); // Czekaj kolejne 2 sekundy przed kliknięciem w formularz
       }, 2000);  // Symulacja ładowania przez 2 sekundy
     });
   </script>
