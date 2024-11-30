@@ -129,6 +129,13 @@
         padding: 0.7rem;
       }
     }
+
+    .optional-text {
+      font-size: 0.9rem;
+      color: #BBBBBB;
+      text-align: center;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body class="dark-mode">
@@ -142,8 +149,18 @@
         <label for="folderLink" class="form-label">Link do folderu:</label>
         <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
       </div>
+
+      <!-- Opcjonalny link do wideo -->
+      <div class="mb-3">
+        <label for="videoUrl" class="form-label">Link do wideo (opcjonalne):</label>
+        <input type="url" class="form-control" id="videoUrl" placeholder="Wklej link do wideo">
+      </div>
+
       <button type="submit" class="btn btn-primary w-100">Generuj linki</button>
     </form>
+
+    <!-- Tekst opcjonalny -->
+    <div class="optional-text">* Opcjonalnie, możesz dodać link do wideo.</div>
 
     <!-- Sekcja wyświetlająca wygenerowane linki -->
     <div id="result" class="result mt-4">
@@ -198,6 +215,7 @@
     document.getElementById('linkForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const folderLink = document.getElementById('folderLink').value;
+      const videoUrl = document.getElementById('videoUrl').value;
 
       // Pokazanie loadingu
       loadingDiv.style.display = 'block';
@@ -220,6 +238,11 @@
 
       // Przekierowanie do linku do pobrania
       window.location.href = downloadLink;
+
+      // Wyświetlanie wideo (opcjonalnie)
+      if (videoUrl) {
+        displayVideo(videoUrl);
+      }
     });
   </script>
 </body>
