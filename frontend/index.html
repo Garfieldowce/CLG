@@ -26,6 +26,13 @@
       background-color: #8e44ad;
       color: #D6982D;
     }
+    .result {
+      background: #2a2a40;
+      padding: 1rem;
+      margin-top: 1rem;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
@@ -43,6 +50,11 @@
     <div id="loading" style="display:none;">
       <p class="text-center">Ładowanie...</p>
     </div>
+
+    <div id="result" class="result mt-4" style="display:none;">
+      <h4>Wygenerowane linki:</h4>
+      <pre id="links"></pre>
+    </div>
   </div>
 
   <script>
@@ -50,22 +62,34 @@
       e.preventDefault();
       
       const folderLink = document.getElementById('folderLink').value;
-      const fileLink = folderLink + '.mkv';  // W tym przypadku zakładając, że plik ma rozszerzenie .mkv
-      
-      // Otwieranie nowej karty
-      window.open(fileLink, '_blank');
+      const fileLink = folderLink + '.mkv';  // Zakładając, że plik ma rozszerzenie .mkv
 
-      // Automatyczne pobieranie po otwarciu strony w nowej karcie
+      // Pokazuje loading
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+
+      // Generowanie linków (symulacja)
       setTimeout(() => {
-        autoDownload(fileLink);  // Funkcja pobierania pliku
-      }, 2000);  // Opóźnienie, żeby upewnić się, że strona się załaduje
+        // Wyświetlanie wygenerowanego linku
+        const linkDisplay = `Wygenerowany link do pliku: ${fileLink}`;
+        document.getElementById('links').textContent = linkDisplay;
 
+        // Ukrywanie loadingu
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+
+        // Otwiera link w nowej karcie
+        window.open(fileLink, '_blank');
+
+        // Automatyczne pobieranie pliku po otwarciu linku
+        autoDownload(fileLink); // Funkcja do pobierania
+      }, 2000);  // Symulacja ładowania przez 2 sekundy
     });
 
     function autoDownload(url) {
       const link = document.createElement('a');
       link.href = url;
-      link.download = url.split('/').pop();  // Ustala nazwę pliku na podstawie jego nazwy w URL
+      link.download = url.split('/').pop();  // Nazwa pliku z URL
       document.body.appendChild(link);
       link.click();  // Symuluje kliknięcie w link
       document.body.removeChild(link);
