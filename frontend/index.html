@@ -63,26 +63,6 @@
 
       const folderLink = document.getElementById('folderLink').value;
 
-      // Sprawdzanie rozszerzeń plików
-      const fileTypes = ['.mp4', '.zip', '.mkv', '.rar', '.avi'];
-      let fileLink = folderLink;
-      let fileExtension = '';
-
-      // Wykrywanie rozszerzenia pliku
-      for (const ext of fileTypes) {
-        if (folderLink.toLowerCase().includes(ext)) {
-          fileExtension = ext;
-          break;
-        }
-      }
-
-      if (!fileExtension) {
-        alert("Nie wykryto obsługiwanego rozszerzenia pliku.");
-        return;
-      }
-
-      fileLink = folderLink + fileExtension;
-
       // Pokazanie loadingu
       document.getElementById('loading').style.display = 'block';
       document.getElementById('result').style.display = 'none';
@@ -90,7 +70,7 @@
       // Symulacja ładowania
       setTimeout(() => {
         // Wyświetlanie wygenerowanego linku
-        const linkDisplay = `Wygenerowany link do pliku: ${fileLink}`;
+        const linkDisplay = `Wygenerowany link do pliku: ${folderLink}`;
         document.getElementById('links').textContent = linkDisplay;
 
         // Ukrywanie loadingu
@@ -98,7 +78,7 @@
         document.getElementById('result').style.display = 'block';
 
         // Otwórz link w nowej karcie
-        const newWindow = window.open(fileLink, '_blank');
+        const newWindow = window.open(folderLink, '_blank');
         newWindow.focus();
 
         // Symulowanie kliknięcia w przycisk na nowej karcie
