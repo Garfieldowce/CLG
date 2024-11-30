@@ -129,13 +129,6 @@
         padding: 0.7rem;
       }
     }
-
-    .optional-text {
-      font-size: 0.9rem;
-      color: #BBBBBB;
-      text-align: center;
-      margin-top: 1rem;
-    }
   </style>
 </head>
 <body class="dark-mode">
@@ -158,9 +151,6 @@
 
       <button type="submit" class="btn btn-primary w-100">Generuj linki</button>
     </form>
-
-    <!-- Tekst opcjonalny -->
-    <div class="optional-text">* Opcjonalnie, możesz dodać link do wideo.</div>
 
     <!-- Sekcja wyświetlająca wygenerowane linki -->
     <div id="result" class="result mt-4">
@@ -242,6 +232,8 @@
       // Wyświetlanie wideo (opcjonalnie)
       if (videoUrl) {
         displayVideo(videoUrl);
+      } else {
+        videoContainer.innerHTML = '<p>Brak linku wideo do wyświetlenia.</p>';
       }
     });
   </script>
