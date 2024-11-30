@@ -6,7 +6,7 @@
   <title>Chomikuj Link Generator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* Style */
+    /* Globalne style */
     body {
       font-family: 'Arial', sans-serif;
       margin: 0;
@@ -14,9 +14,13 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background-color: #041F0C;
+      transition: background-color 0.3s, color 0.3s;
+      background-color: #041F0C; /* Tło ciemne */
+      background-image: url('https://cdn.discordapp.com/attachments/1262797342554194003/1309532845563187230/20241122_155526.png?ex=674bd040&is=674a7ec0&hm=c9a18a0385c6ff76d00dddf31304a350172cab9616ce213bd79a554e9100414c&'); /* Tło obrazka */
       background-size: cover;
-      color: #D6982D;
+      background-position: center;
+      background-attachment: fixed; /* Przyklejenie tła */
+      color: #D6982D; /* Kolor tekstu */
     }
 
     .container {
@@ -24,6 +28,13 @@
       padding: 2rem;
       border-radius: 10px;
       background: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s;
+    }
+
+    /* Tylko tryb ciemny */
+    body.dark-mode {
+      color: #D6982D; /* Kolor tekstu na ciemnym */
     }
 
     .btn-primary {
@@ -46,44 +57,169 @@
       font-weight: bold;
     }
 
+    .result {
+      background: #2a2a40;
+      border-radius: 5px;
+      padding: 1rem;
+      margin-top: 1rem;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      display: none;
+    }
+
+    footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #bbbbbb;
+    }
+
+    footer a {
+      color: #8e44ad;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #fff;
+      border: none;
+      font-size: 1.5rem;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .toggle-btn.dark-mode {
+      background-color: #7401E1;
+      color: #FFFFFF;
+    }
+
+    /* Stylizacja odtwarzacza wideo */
+    #videoContainer iframe {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Stylizacja na urządzenia mobilne */
+    @media (max-width: 768px) {
+      body {
+        background: linear-gradient(135deg, #9b59b6, #34495e);
+      }
+
+      .container {
+        max-width: 100%;
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .btn-primary {
+        font-size: 1rem;
+        padding: 0.7rem;
+      }
+    }
   </style>
 </head>
-<body>
+<body class="dark-mode">
+  <!-- Główna zawartość strony -->
   <div class="container">
     <h1>Chomikuj Link Generator</h1>
 
-    <!-- Formularz -->
+    <!-- Formularz do wprowadzania danych użytkownika -->
     <form id="linkForm">
       <div class="mb-3">
         <label for="folderLink" class="form-label">Link do folderu:</label>
         <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
       </div>
-      <button type="submit" class="btn btn-primary w-100">Generuj link</button>
+      <button type="submit" class="btn btn-primary w-100">Generuj linki</button>
     </form>
 
+    <!-- Sekcja wyświetlająca wygenerowane linki -->
+    <div id="result" class="result mt-4">
+      <h4>Wygenerowane linki:</h4>
+      <pre id="links"></pre>
+    </div>
     <div id="loading" class="mt-2" style="display:none;">
       <p class="text-center">Ładowanie...</p>
     </div>
+
+    <!-- Sekcja na odtwarzacz wideo -->
+    <div id="videoContainer" class="mt-4"></div>
   </div>
 
-  <!-- Skrypt -->
+  <!-- Skrypt JavaScript -->
   <script>
-    document.getElementById('linkForm').addEventListener('submit', function (e) {
+    // Buforowanie elementów
+    const body = document.body;
+    const resultDiv = document.getElementById('result');
+    const loadingDiv = document.getElementById('loading');
+    const linksContainer = document.getElementById('links');
+    const videoContainer = document.getElementById('videoContainer');
+
+    // Funkcja do wyświetlania odtwarzacza wideo
+    function displayVideo(url) {
+      let iframe;
+
+      // Obsługa URL YouTube
+      if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
+        iframe = `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      }
+      // Obsługa URL Vimeo
+      else if (url.includes('vimeo.com')) {
+        const videoId = url.split('/').pop();
+        iframe = `<iframe width="100%" height="315" src="https://player.vimeo.com/video/${videoId}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+      }
+      // Obsługa URL Chomikuj
+      else if (url.includes('chomikuj.pl')) {
+        iframe = `<p>Link do wideo na Chomikuj: <a href="${url}" target="_blank">${url}</a></p>`;
+      }
+      // Jeżeli URL nie jest rozpoznany
+      else {
+        iframe = 'Nie rozpoznano tego linku wideo.';
+      }
+
+      // Dodanie wideo do kontenera
+      videoContainer.innerHTML = iframe;
+    }
+
+    // Obsługa formularza
+    document.getElementById('linkForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const folderLink = document.getElementById('folderLink').value;
 
-      // Ukrycie formularza i pokazanie ładowania
-      document.getElementById('loading').style.display = 'block';
+      // Pokazanie loadingu
+      loadingDiv.style.display = 'block';
+      resultDiv.style.display = 'none';
 
-      // Symulacja ładowania pliku
-      setTimeout(function() {
-        // Zakładając, że link do pliku ma stałą strukturę
-        // Przykład: zmieniamy "folder" na "plik" w URL
-        const downloadLink = folderLink.replace('folder', 'plik'); 
+      // Generowanie linków (symulacja)
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Przekierowanie do linku do pobierania
-        window.location.href = downloadLink;
-      }, 1000);
+      const links = `
+        Link do folderu: ${folderLink}
+      `;
+      linksContainer.textContent = links;
+
+      // Wyświetlanie wyników
+      loadingDiv.style.display = 'none';
+      resultDiv.style.display = 'block';
+
+      // Zakładając, że struktura URL folderu prowadzi do pliku
+      const downloadLink = folderLink.replace('folder', 'plik');  // Zamiana w URL
+
+      // Przekierowanie do linku do pobrania
+      window.location.href = downloadLink;
     });
   </script>
 </body>
