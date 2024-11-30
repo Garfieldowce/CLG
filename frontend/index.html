@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chomikuj Link Generator</title>
+  <title>Automatyczne Pobieranie</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -38,27 +38,26 @@
 <body>
 
   <div class="container">
-    <h1>Chomikuj Link Generator</h1>
-    <form id="linkForm">
+    <h1>Automatyczne Pobieranie</h1>
+    <form id="downloadForm">
       <div class="mb-3">
-        <label for="folderLink" class="form-label">Link do folderu:</label>
+        <label for="folderLink" class="form-label">Adres folderu:</label>
         <input type="url" class="form-control" id="folderLink" placeholder="Wklej link do folderu" required>
       </div>
-      <button type="submit" class="btn btn-primary w-100">Generuj link</button>
+      <button type="submit" class="btn btn-primary w-100">Pobierz plik</button>
     </form>
 
     <div id="loading" style="display:none;">
-      <p class="text-center">Ładowanie...</p>
+      <p class="text-center">Pobieranie...</p>
     </div>
 
     <div id="result" class="result mt-4" style="display:none;">
-      <h4>Wygenerowane linki:</h4>
-      <pre id="links"></pre>
+      <h4>Pobieranie zostało rozpoczęte!</h4>
     </div>
   </div>
 
   <script>
-    document.getElementById('linkForm').addEventListener('submit', function(e) {
+    document.getElementById('downloadForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
       const folderLink = document.getElementById('folderLink').value;
@@ -67,36 +66,20 @@
       document.getElementById('loading').style.display = 'block';
       document.getElementById('result').style.display = 'none';
 
-      // Symulacja ładowania
+      // Ustawienie timeoutu, aby rozpocząć pobieranie po 2 sekundach
       setTimeout(() => {
-        // Wyświetlanie wygenerowanego linku
-        const linkDisplay = `Wygenerowany link do pliku: ${folderLink}`;
-        document.getElementById('links').textContent = linkDisplay;
+        // Utwórz element linku do pobrania
+        const downloadLink = document.createElement('a');
+        downloadLink.href = folderLink;  // Link do folderu
+        downloadLink.download = folderLink.split('/').pop();  // Automatyczne pobieranie z nazwą pliku
+        document.body.appendChild(downloadLink);
+        downloadLink.click();  // Kliknięcie w link, by rozpocząć pobieranie
+        document.body.removeChild(downloadLink);  // Usunięcie elementu linku z DOM
 
-        // Ukrywanie loadingu
+        // Ukrycie loadingu i pokazanie komunikatu o rozpoczęciu pobierania
         document.getElementById('loading').style.display = 'none';
         document.getElementById('result').style.display = 'block';
-
-        // Otwórz link w nowej karcie
-        const newWindow = window.open(folderLink, '_blank');
-        newWindow.focus();
-
-        // Symulowanie kliknięcia w pierwszy przycisk na nowej karcie
-        setTimeout(() => {
-          const downloadButton = newWindow.document.querySelector('.greenButtonCSS'); // Wyszukaj przycisk
-          if (downloadButton) {
-            downloadButton.click(); // Kliknij pierwszy przycisk "Pobierz"
-          }
-        }, 2000); // Czekaj 2 sekundy na załadowanie nowej strony
-
-        // Symulowanie kliknięcia w drugi przycisk submit (formularz)
-        setTimeout(() => {
-          const submitButton = newWindow.document.querySelector('button[type="submit"]'); // Wyszukaj drugi przycisk
-          if (submitButton) {
-            submitButton.click(); // Kliknij przycisk "Pobierz"
-          }
-        }, 4000); // Czekaj kolejne 2 sekundy przed kliknięciem w formularz
-      }, 2000);  // Symulacja ładowania przez 2 sekundy
+      }, 2000); // Czekaj 2 sekundy na załadowanie procesu
     });
   </script>
 
