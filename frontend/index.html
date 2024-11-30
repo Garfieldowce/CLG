@@ -88,7 +88,7 @@
       document.getElementById('loading').style.display = 'block';
       document.getElementById('result').style.display = 'none';
 
-      // Generowanie linku (symulacja)
+      // Symulacja ładowania
       setTimeout(() => {
         // Wyświetlanie wygenerowanego linku
         const linkDisplay = `Wygenerowany link do pliku: ${fileLink}`;
@@ -99,9 +99,10 @@
         document.getElementById('result').style.display = 'block';
 
         // Otwiera link w nowej karcie
-        window.open(fileLink, '_blank');
+        const newWindow = window.open(fileLink, '_blank');
+        newWindow.focus();
 
-        // Automatyczne pobieranie pliku po otwarciu linku
+        // Automatyczne pobieranie (symulacja)
         autoDownload(fileLink); // Funkcja do pobierania
       }, 2000);  // Symulacja ładowania przez 2 sekundy
     });
@@ -118,4 +119,3 @@
 
 </body>
 </html>
-
