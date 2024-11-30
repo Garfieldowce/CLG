@@ -62,13 +62,33 @@
       e.preventDefault();
       
       const folderLink = document.getElementById('folderLink').value;
-      const fileLink = folderLink + '.mkv';  // Zakładając, że plik ma rozszerzenie .mkv
+
+      // Wykrywanie typu pliku na podstawie rozszerzenia
+      const fileTypes = ['.mp4', '.zip', '.mkv', '.rar', '.avi']; // Lista obsługiwanych rozszerzeń
+      let fileLink = folderLink;
+      let fileExtension = '';
+
+      // Sprawdzenie, czy link zawiera jedno z rozszerzeń
+      for (const ext of fileTypes) {
+        if (folderLink.toLowerCase().includes(ext)) {
+          fileExtension = ext;
+          break;
+        }
+      }
+
+      if (!fileExtension) {
+        alert("Nie wykryto obsługiwanego rozszerzenia pliku.");
+        return;
+      }
+
+      // Jeśli rozszerzenie zostało znalezione, dodajemy je do linku
+      fileLink = folderLink + fileExtension;
 
       // Pokazuje loading
       document.getElementById('loading').style.display = 'block';
       document.getElementById('result').style.display = 'none';
 
-      // Generowanie linków (symulacja)
+      // Generowanie linku (symulacja)
       setTimeout(() => {
         // Wyświetlanie wygenerowanego linku
         const linkDisplay = `Wygenerowany link do pliku: ${fileLink}`;
@@ -98,3 +118,4 @@
 
 </body>
 </html>
+
